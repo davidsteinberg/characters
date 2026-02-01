@@ -19,8 +19,32 @@ function App() {
 
   const [currentCharacterIndex, setCurrentCharacterIndex] = useState(-1)
 
+  const [selectedCategories, setSelectedCategories] = useState<{
+    philosophy: boolean
+    physical: boolean
+    vocal: boolean
+  }>(() => {
+    const saved = localStorage.getItem('selectedCategories')
+    if (saved) {
+      try {
+        return JSON.parse(saved)
+      } catch (e) {
+        console.error('Failed to parse selectedCategories:', e)
+      }
+    }
+    return {
+      philosophy: true,
+      physical: true,
+      vocal: true,
+    }
+  })
+
   const [menuOpen, setMenuOpen] = useState(false)
   const [useLocalStorage, setUseLocalStorage] = useState(true)
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem('darkMode')
+    return saved ? JSON.parse(saved) : false
+  })
 
   const [usedIndices, setUsedIndices] = useState<{
     philosophies: Set<number>
@@ -65,6 +89,16 @@ function App() {
     }
   }, [usedIndices, useLocalStorage])
 
+  // Save selectedCategories to localStorage
+  useEffect(() => {
+    localStorage.setItem('selectedCategories', JSON.stringify(selectedCategories))
+  }, [selectedCategories])
+
+  // Save darkMode to localStorage
+  useEffect(() => {
+    localStorage.setItem('darkMode', JSON.stringify(darkMode))
+  }, [darkMode])
+
   const clearLocalStorage = () => {
     localStorage.removeItem('characterIndices')
     setUsedIndices({
@@ -78,6 +112,44 @@ function App() {
   const toggleLocalStorage = () => {
     setUseLocalStorage(!useLocalStorage)
     setMenuOpen(false)
+  }
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode)
+  }
+
+  // Apply dark mode class to body
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add('dark-mode')
+    } else {
+      document.body.classList.remove('dark-mode')
+    }
+  }, [darkMode])
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement
+      const menuBtn = document.querySelector('.menu-btn')
+      const menu = document.querySelector('.menu')
+
+      if (menuOpen && menu && menuBtn && !menu.contains(target) && !menuBtn.contains(target)) {
+        setMenuOpen(false)
+      }
+    }
+
+    if (menuOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [menuOpen])
+
+  const toggleCategory = (category: 'philosophy' | 'physical' | 'vocal') => {
+    setSelectedCategories(prev => ({
+      ...prev,
+      [category]: !prev[category],
+    }))
   }
 
   const getRandomUnusedIndex = (list: unknown[], usedSet: Set<number>): number => {
@@ -98,17 +170,23 @@ function App() {
   const generateCharacter = () => {
     const newUsedIndices = { ...usedIndices }
 
-    const philosophyIndex = getRandomUnusedIndex(philosophies, newUsedIndices.philosophies)
-    const physicalIndex = getRandomUnusedIndex(physicalCharacteristics, newUsedIndices.physical)
-    const vocalIndex = getRandomUnusedIndex(vocalCharacteristics, newUsedIndices.vocal)
+    const philosophyIndex = selectedCategories.philosophy
+      ? getRandomUnusedIndex(philosophies, newUsedIndices.philosophies)
+      : -1
+    const physicalIndex = selectedCategories.physical
+      ? getRandomUnusedIndex(physicalCharacteristics, newUsedIndices.physical)
+      : -1
+    const vocalIndex = selectedCategories.vocal
+      ? getRandomUnusedIndex(vocalCharacteristics, newUsedIndices.vocal)
+      : -1
 
     setUsedIndices(newUsedIndices)
     setMenuOpen(false)
 
     const newCharacter = {
-      philosophy: philosophies[philosophyIndex],
-      physical: physicalCharacteristics[physicalIndex],
-      vocal: vocalCharacteristics[vocalIndex],
+      philosophy: selectedCategories.philosophy ? philosophies[philosophyIndex] : '',
+      physical: selectedCategories.physical ? physicalCharacteristics[physicalIndex] : '',
+      vocal: selectedCategories.vocal ? vocalCharacteristics[vocalIndex] : '',
     }
 
     setCharacter(newCharacter)
@@ -153,7 +231,7 @@ function App() {
   }, [])
 
   return (
-    <div className="app">
+    <div className={`app ${darkMode ? 'dark-mode' : ''}`}>
       <div className="header">
         <h1>Character Generator</h1>
         <button className="menu-btn" onClick={() => setMenuOpen(!menuOpen)}>
@@ -163,6 +241,9 @@ function App() {
         </button>
         {menuOpen && (
           <div className="menu">
+            <button className="menu-item" onClick={toggleDarkMode}>
+              {darkMode ? 'Light' : 'Dark'} Mode
+            </button>
             <button className="menu-item" onClick={clearLocalStorage}>
               Clear History
             </button>
@@ -175,40 +256,69 @@ function App() {
 
       {character && (
         <div className="character-display">
-          <div className="trait">
-            <div className="trait-label">Philosophical</div>
-            <div className="trait-value">{character.philosophy}</div>
-          </div>
+          {selectedCategories.philosophy && character.philosophy && (
+            <div className="trait">
+              <div className="trait-label">POV</div>
+              <div className="trait-value">{character.philosophy}</div>
+            </div>
+          )}
 
-          <div className="trait">
-            <div className="trait-label">Physical</div>
-            <div className="trait-value">{character.physical}</div>
-          </div>
+          {selectedCategories.physical && character.physical && (
+            <div className="trait">
+              <div className="trait-label">Body</div>
+              <div className="trait-value">{character.physical}</div>
+            </div>
+          )}
 
-          <div className="trait">
-            <div className="trait-label">Vocal</div>
-            <div className="trait-value">{character.vocal}</div>
-          </div>
+          {selectedCategories.vocal && character.vocal && (
+            <div className="trait">
+              <div className="trait-label">Voice</div>
+              <div className="trait-value">{character.vocal}</div>
+            </div>
+          )}
         </div>
       )}
 
-      <div className="navigation">
-        <button
-          className="nav-btn nav-prev"
-          onClick={goToPrevious}
-          disabled={!characterHistory || currentCharacterIndex <= 0}
-          aria-label="Previous character"
-        >
-          ←
-        </button>
-        <button
-          className="nav-btn nav-next"
-          onClick={goToNext}
-          disabled={false}
-          aria-label="Next character or generate new"
-        >
-          →
-        </button>
+      <div className="controls">
+        <div className="button-group">
+          <button
+            className={`group-btn ${selectedCategories.philosophy ? 'active' : ''}`}
+            onClick={() => toggleCategory('philosophy')}
+          >
+            POV
+          </button>
+          <button
+            className={`group-btn ${selectedCategories.physical ? 'active' : ''}`}
+            onClick={() => toggleCategory('physical')}
+          >
+            Body
+          </button>
+          <button
+            className={`group-btn ${selectedCategories.vocal ? 'active' : ''}`}
+            onClick={() => toggleCategory('vocal')}
+          >
+            Voice
+          </button>
+        </div>
+
+        <div className="navigation">
+          <button
+            className="nav-btn nav-prev"
+            onClick={goToPrevious}
+            disabled={!characterHistory || currentCharacterIndex <= 0}
+            aria-label="Previous character"
+          >
+            ←
+          </button>
+          <button
+            className="nav-btn nav-next"
+            onClick={goToNext}
+            disabled={false}
+            aria-label="Next character or generate new"
+          >
+            →
+          </button>
+        </div>
       </div>
     </div>
   )
