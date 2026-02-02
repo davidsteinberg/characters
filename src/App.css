@@ -5,8 +5,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
   padding-left: 2rem;
   padding-right: 2rem;
   background: white;
@@ -23,6 +21,7 @@
   width: 100%;
   position: relative;
   flex-shrink: 0;
+  margin-top: 1.5rem;
 }
 
 h1 {
@@ -124,6 +123,7 @@ h1 {
   gap: 1.5rem;
   justify-content: center;
   flex-shrink: 0;
+  margin-bottom: 3rem;
 }
 
 .star-btn {
