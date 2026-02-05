@@ -1,10 +1,27 @@
-/* Bad examples modal and list styles */
+/* Bad examples view and list styles */
+.bad-examples-view {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  background: white;
+  overflow-y: auto;
+}
+
 .bad-examples-modal {
   margin-top: 1.5rem;
   padding: 1.5rem;
   background: #f9f9f9;
   border-radius: 8px;
   max-width: 600px;
+}
+
+.bad-examples-view h2,
+.bad-examples-modal h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #333;
 }
 
 .bad-examples-modal h2 {
@@ -84,6 +101,39 @@
 }
 
 /* Dark mode styles */
+.dark-mode .bad-examples-view {
+  background: #1a1a1a;
+}
+
+.dark-mode .bad-examples-view h2 {
+  color: #e0e0e0;
+}
+
+.dark-mode .bad-examples-modal {
+  background: #333;
+}
+
+.dark-mode .bad-examples-modal h2 {
+  color: #e0e0e0;
+}
+
+.dark-mode .bad-item {
+  background: #2a2a2a;
+  border-color: #444;
+}
+
+.dark-mode .bad-item .label {
+  color: #aaa;
+}
+
+.dark-mode .unflag-btn {
+  color: #666;
+}
+
+.dark-mode .unflag-btn:hover {
+  color: #ff6b6b;
+}
+
 .dark-mode .bad-examples-modal {
   background: #333;
 }

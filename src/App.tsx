@@ -142,7 +142,7 @@ function App() {
     return []
   })
 
-  const [viewMode, setViewMode] = useState<'browse' | 'saved'>('browse')
+  const [viewMode, setViewMode] = useState<'browse' | 'saved' | 'badExamples'>('browse')
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -431,7 +431,7 @@ function App() {
             <button className="menu-item" onClick={switchToSavedMode}>
               ★ Saved ({savedCharacters.length})
             </button>
-              <button className="menu-item" onClick={() => { setViewBadExamples(true); setMenuOpen(false) }}>
+            <button className="menu-item" onClick={() => { setViewMode('badExamples'); setMenuOpen(false) }}>
                 <span style={{verticalAlign: 'middle', marginRight: '0.5em', display: 'inline-block'}}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{verticalAlign: 'middle'}}><path d="M5 5v14"/><path d="M5 5h12l-2 4 2 4H5"/></svg>
                 </span>
@@ -537,10 +537,10 @@ function App() {
             </button>
           </div>
         </>
-      ) : (
+      ) : viewMode === 'saved' ? (
         <div className="saved-view">
           <button className="back-btn" onClick={switchToBrowseMode}>← Back</button>
-          <h2>Saved Characters ({savedCharacters.length})</h2>
+          <h2>Saved ({savedCharacters.length})</h2>
           {savedCharacters.length === 0 ? (
             <p className="empty-message">No saved characters yet. Star characters to save them!</p>
           ) : (
@@ -588,14 +588,15 @@ function App() {
               ))}
             </div>
           )}
-            {viewBadExamples && (
-              <div className="bad-examples-modal">
-                <button className="back-btn" onClick={() => setViewBadExamples(false)}>← Back</button>
-                <h2>Flagged Bad Examples ({badExamples.length})</h2>
-                {badExamples.length === 0 ? (
-                  <p className="empty-message">No bad examples flagged yet.</p>
-                ) : (
-                  <div className="bad-list">
+        </div>
+      ) : viewMode === 'badExamples' ? (
+        <div className="bad-examples-view">
+          <button className="back-btn" onClick={switchToBrowseMode}>← Back</button>
+          <h2>Flagged ({badExamples.length})</h2>
+          {badExamples.length === 0 ? (
+            <p className="empty-message">No bad examples flagged yet.</p>
+          ) : (
+            <div className="bad-list">
                     {badExamples.map((ex, i) => (
                       <div key={i} className="bad-item">
                         <div className="bad-item-content">
@@ -618,14 +619,12 @@ function App() {
                       </div>
                     ))}
                   </div>
-                )}
-                <button className="download-btn" onClick={downloadBadExamples} disabled={badExamples.length === 0}>
-                  Download Bad Examples
-                </button>
-              </div>
             )}
+            <button className="download-btn" onClick={downloadBadExamples} disabled={badExamples.length === 0}>
+              Download Bad Examples
+            </button>
         </div>
-      )}
+      ) : null}
     </div>
   )
 }
