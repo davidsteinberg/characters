@@ -531,7 +531,7 @@ body.dark-mode {
   color: #764ba2;
 }
 
-.dark-mode .star-btn {
+.dark-mode .star-btn,.flag-btn {
   color: #555;
 }
 
