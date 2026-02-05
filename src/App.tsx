@@ -375,42 +375,48 @@ function App() {
       {viewMode === 'browse' ? (
         <>
           <div className="button-group">
-            <button
-              className={`group-btn ${selectedCategories.locations ? 'active' : ''}`}
-              onClick={() => toggleCategory('locations')}
-            >
-              Location
-            </button>
-            <button
-              className={`group-btn ${selectedCategories.activities ? 'active' : ''}`}
-              onClick={() => toggleCategory('activities')}
-            >
-              Activity
-            </button>
-            <button
-              className={`group-btn ${selectedCategories.philosophy ? 'active' : ''}`}
-              onClick={() => toggleCategory('philosophy')}
-            >
-              POV
-            </button>
-            <button
-              className={`group-btn ${selectedCategories.emotions ? 'active' : ''}`}
-              onClick={() => toggleCategory('emotions')}
-            >
-              Emotion
-            </button>
-            <button
-              className={`group-btn ${selectedCategories.physical ? 'active' : ''}`}
-              onClick={() => toggleCategory('physical')}
-            >
-              Body
-            </button>
-            <button
-              className={`group-btn ${selectedCategories.vocal ? 'active' : ''}`}
-              onClick={() => toggleCategory('vocal')}
-            >
-              Voice
-            </button>
+            <div className="button-row">
+              <button
+                className={`group-btn ${selectedCategories.locations ? 'active' : ''}`}
+                onClick={() => toggleCategory('locations')}
+              >
+                Location
+              </button>
+              <button
+                className={`group-btn ${selectedCategories.activities ? 'active' : ''}`}
+                onClick={() => toggleCategory('activities')}
+              >
+                Activity
+              </button>
+            </div>
+            <div className="button-row">
+              <button
+                className={`group-btn ${selectedCategories.philosophy ? 'active' : ''}`}
+                onClick={() => toggleCategory('philosophy')}
+              >
+                POV
+              </button>
+              <button
+                className={`group-btn ${selectedCategories.emotions ? 'active' : ''}`}
+                onClick={() => toggleCategory('emotions')}
+              >
+                Emotion
+              </button>
+            </div>
+            <div className="button-row">
+              <button
+                className={`group-btn ${selectedCategories.physical ? 'active' : ''}`}
+                onClick={() => toggleCategory('physical')}
+              >
+                Body
+              </button>
+              <button
+                className={`group-btn ${selectedCategories.vocal ? 'active' : ''}`}
+                onClick={() => toggleCategory('vocal')}
+              >
+                Voice
+              </button>
+            </div>
           </div>
 
           {character && (
