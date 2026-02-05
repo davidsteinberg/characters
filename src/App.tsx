@@ -3,18 +3,17 @@ import './App.css'
 import { philosophies } from './data/philosophies'
 import { physicalCharacteristics } from './data/physicalCharacteristics'
 import { vocalCharacteristics } from './data/vocalCharacteristics'
+import { emotions } from './data/emotions'
 
 function App() {
   const [character, setCharacter] = useState<{
-    philosophy: string
-    physical: string
-    vocal: string
+    category: string
+    value: string
   } | null>(null)
 
   const [characterHistory, setCharacterHistory] = useState<Array<{
-    philosophy: string
-    physical: string
-    vocal: string
+    category: string
+    value: string
   }> | null>(null)
 
   const [currentCharacterIndex, setCurrentCharacterIndex] = useState(-1)
@@ -23,6 +22,7 @@ function App() {
     philosophy: boolean
     physical: boolean
     vocal: boolean
+    emotions: boolean
   }>(() => {
     const saved = localStorage.getItem('selectedCategories')
     if (saved) {
@@ -36,6 +36,7 @@ function App() {
       philosophy: true,
       physical: true,
       vocal: true,
+      emotions: true,
     }
   })
 
@@ -50,16 +51,17 @@ function App() {
     philosophies: Set<number>
     physical: Set<number>
     vocal: Set<number>
+    emotions: Set<number>
   }>({
     philosophies: new Set(),
     physical: new Set(),
     vocal: new Set(),
+    emotions: new Set(),
   })
 
   const [savedCharacters, setSavedCharacters] = useState<Array<{
-    philosophy: string
-    physical: string
-    vocal: string
+    category: string
+    value: string
   }>>(() => {
     const saved = localStorage.getItem('savedCharacters')
     if (saved) {
@@ -81,11 +83,12 @@ function App() {
       if (saved) {
         try {
           const parsed = JSON.parse(saved)
-          setUsedIndices({
-            philosophies: new Set(parsed.philosophies),
-            physical: new Set(parsed.physical),
-            vocal: new Set(parsed.vocal),
-          })
+              setUsedIndices({
+                philosophies: new Set(parsed.philosophies),
+                physical: new Set(parsed.physical),
+                vocal: new Set(parsed.vocal),
+                emotions: new Set(parsed.emotions || []),
+              })
         } catch (e) {
           console.error('Failed to parse localStorage:', e)
         }
@@ -128,6 +131,7 @@ function App() {
       philosophies: new Set(),
       physical: new Set(),
       vocal: new Set(),
+      emotions: new Set(),
     })
     setMenuOpen(false)
   }
@@ -145,34 +149,26 @@ function App() {
     if (!character) return
 
     const isAlreadySaved = savedCharacters.some(
-      saved =>
-        saved.philosophy === character.philosophy &&
-        saved.physical === character.physical &&
-        saved.vocal === character.vocal
+      saved => saved.category === character?.category && saved.value === character?.value
     )
 
     if (isAlreadySaved) {
       setSavedCharacters(prev =>
         prev.filter(
-          saved => !(
-            saved.philosophy === character.philosophy &&
-            saved.physical === character.physical &&
-            saved.vocal === character.vocal
-          )
+          saved => !(saved.category === character?.category && saved.value === character?.value)
         )
       )
     } else {
-      setSavedCharacters(prev => [...prev, character])
+      setSavedCharacters(prev => [...prev, character!])
     }
+
+    // Removed obsolete logic referencing philosophy, physical, vocal
   }
 
   const isCharacterSaved = () => {
     if (!character) return false
     return savedCharacters.some(
-      saved =>
-        saved.philosophy === character.philosophy &&
-        saved.physical === character.physical &&
-        saved.vocal === character.vocal
+      saved => saved.category === character.category && saved.value === character.value
     )
   }
 
@@ -228,7 +224,7 @@ function App() {
     }
   }, [menuOpen])
 
-  const toggleCategory = (category: 'philosophy' | 'physical' | 'vocal') => {
+  const toggleCategory = (category: 'philosophy' | 'physical' | 'vocal' | 'emotions') => {
     setSelectedCategories(prev => ({
       ...prev,
       [category]: !prev[category],
@@ -237,44 +233,56 @@ function App() {
 
   const getRandomUnusedIndex = (list: unknown[], usedSet: Set<number>): number => {
     if (usedSet.size >= list.length) {
-      // All items have been used, reset
       usedSet.clear()
     }
-
     let index: number
     do {
       index = Math.floor(Math.random() * list.length)
     } while (usedSet.has(index))
-
     usedSet.add(index)
     return index
   }
 
   const generateCharacter = () => {
     const newUsedIndices = { ...usedIndices }
-
-    const philosophyIndex = selectedCategories.philosophy
-      ? getRandomUnusedIndex(philosophies, newUsedIndices.philosophies)
-      : -1
-    const physicalIndex = selectedCategories.physical
-      ? getRandomUnusedIndex(physicalCharacteristics, newUsedIndices.physical)
-      : -1
-    const vocalIndex = selectedCategories.vocal
-      ? getRandomUnusedIndex(vocalCharacteristics, newUsedIndices.vocal)
-      : -1
-
+    const enabledCategories = Object.entries(selectedCategories)
+      .filter(([_, enabled]) => enabled)
+      .map(([cat]) => cat)
+    if (enabledCategories.length === 0) {
+      setCharacter(null)
+      return
+    }
+    const randomCategory = enabledCategories[Math.floor(Math.random() * enabledCategories.length)]
+    let value = ''
+    switch (randomCategory) {
+      case 'philosophy': {
+        const idx = getRandomUnusedIndex(philosophies, newUsedIndices.philosophies)
+        value = philosophies[idx]
+        break
+      }
+      case 'physical': {
+        const idx = getRandomUnusedIndex(physicalCharacteristics, newUsedIndices.physical)
+        value = physicalCharacteristics[idx]
+        break
+      }
+      case 'vocal': {
+        const idx = getRandomUnusedIndex(vocalCharacteristics, newUsedIndices.vocal)
+        value = vocalCharacteristics[idx]
+        break
+      }
+      case 'emotions': {
+        const idx = getRandomUnusedIndex(emotions, newUsedIndices.emotions)
+        value = emotions[idx]
+        break
+      }
+    }
     setUsedIndices(newUsedIndices)
     setMenuOpen(false)
-
     const newCharacter = {
-      philosophy: selectedCategories.philosophy ? philosophies[philosophyIndex] : '',
-      physical: selectedCategories.physical ? physicalCharacteristics[physicalIndex] : '',
-      vocal: selectedCategories.vocal ? vocalCharacteristics[vocalIndex] : '',
+      category: randomCategory,
+      value,
     }
-
     setCharacter(newCharacter)
-
-    // Add to history - if we're in the middle of history, remove everything after current index
     if (characterHistory && currentCharacterIndex < characterHistory.length - 1) {
       const newHistory = characterHistory.slice(0, currentCharacterIndex + 1)
       newHistory.push(newCharacter)
@@ -361,30 +369,25 @@ function App() {
             >
               Voice
             </button>
+            <button
+              className={`group-btn ${selectedCategories.emotions ? 'active' : ''}`}
+              onClick={() => toggleCategory('emotions')}
+            >
+              Emotion
+            </button>
           </div>
 
           {character && (
             <div className="character-display">
-              {selectedCategories.philosophy && character.philosophy && (
-                <div className="trait">
-                  <div className="trait-label">POV</div>
-                  <div className="trait-value">{character.philosophy}</div>
+              <div className="trait">
+                <div className="trait-label">
+                  {character.category === 'philosophy' && 'POV'}
+                  {character.category === 'physical' && 'Body'}
+                  {character.category === 'vocal' && 'Voice'}
+                  {character.category === 'emotions' && 'Emotion'}
                 </div>
-              )}
-
-              {selectedCategories.physical && character.physical && (
-                <div className="trait">
-                  <div className="trait-label">Body</div>
-                  <div className="trait-value">{character.physical}</div>
-                </div>
-              )}
-
-              {selectedCategories.vocal && character.vocal && (
-                <div className="trait">
-                  <div className="trait-label">Voice</div>
-                  <div className="trait-value">{character.vocal}</div>
-                </div>
-              )}
+                <div className="trait-value">{character.value}</div>
+              </div>
             </div>
           )}
 
@@ -425,9 +428,14 @@ function App() {
               {savedCharacters.map((char, index) => (
                 <div key={index} className="saved-item">
                   <div className="saved-character">
-                    {char.philosophy && <div className="saved-trait"><span className="label">POV:</span> {char.philosophy}</div>}
-                    {char.physical && <div className="saved-trait"><span className="label">Body:</span> {char.physical}</div>}
-                    {char.vocal && <div className="saved-trait"><span className="label">Voice:</span> {char.vocal}</div>}
+                    <div className="saved-trait">
+                      <span className="label">
+                        {char.category === 'philosophy' && 'POV:'}
+                        {char.category === 'physical' && 'Body:'}
+                        {char.category === 'vocal' && 'Voice:'}
+                        {char.category === 'emotions' && 'Emotion:'}
+                      </span> {char.value}
+                    </div>
                   </div>
                   <div className="saved-actions">
                     <button
