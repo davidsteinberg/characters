@@ -27,13 +27,21 @@ function App() {
       localStorage.setItem('badExamples', JSON.stringify(badExamples))
     }, [badExamples])
 
-    // Flag current character as bad
+    // Flag or unflag current character as bad
     const flagBadExample = () => {
       if (!character) return
       const alreadyFlagged = badExamples.some(
         ex => ex.category === character.category && ex.value === character.value
       )
-      if (!alreadyFlagged) {
+      if (alreadyFlagged) {
+        // Unflag if already flagged
+        setBadExamples(prev =>
+          prev.filter(
+            ex => !(ex.category === character.category && ex.value === character.value)
+          )
+        )
+      } else {
+        // Flag if not already flagged
         setBadExamples(prev => [...prev, character])
       }
     }
@@ -515,8 +523,7 @@ function App() {
             <button
               className={`flag-btn ${badExamples.some(ex => ex.category === character?.category && ex.value === character?.value) ? 'flagged' : ''}`}
               onClick={flagBadExample}
-              title={badExamples.some(ex => ex.category === character?.category && ex.value === character?.value) ? 'Already flagged as bad' : 'Flag as bad example'}
-              disabled={badExamples.some(ex => ex.category === character?.category && ex.value === character?.value)}
+              title={badExamples.some(ex => ex.category === character?.category && ex.value === character?.value) ? 'Remove from flagged' : 'Flag as bad example'}
             >
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{verticalAlign: 'middle'}}><path d="M5 5v14"/><path d="M5 5h12l-2 4 2 4H5"/></svg>
             </button>
