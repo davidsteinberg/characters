@@ -1,0 +1,110 @@
+/* Bad examples modal and list styles */
+.bad-examples-modal {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+  max-width: 600px;
+}
+
+.bad-examples-modal h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.bad-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.bad-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  gap: 1rem;
+}
+
+.bad-item-content {
+  flex: 1;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.bad-item .label {
+  font-weight: 600;
+  color: #666;
+  min-width: 100px;
+}
+
+.unflag-btn {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0.25rem 0.5rem;
+  transition: color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.unflag-btn:hover {
+  color: #d32f2f;
+}
+
+.download-btn {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s ease;
+  width: 100%;
+  font-weight: 600;
+}
+
+.download-btn:hover:not(:disabled) {
+  background: #764ba2;
+}
+
+.download-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Dark mode styles */
+.dark-mode .bad-examples-modal {
+  background: #333;
+}
+
+.dark-mode .bad-examples-modal h2 {
+  color: #e0e0e0;
+}
+
+.dark-mode .bad-item {
+  background: #2a2a2a;
+  border-color: #444;
+}
+
+.dark-mode .bad-item .label {
+  color: #aaa;
+}
+
+.dark-mode .unflag-btn {
+  color: #666;
+}
+
+.dark-mode .unflag-btn:hover {
+  color: #ff6b6b;
+}
