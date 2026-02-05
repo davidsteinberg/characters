@@ -27,8 +27,13 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  background: white;
+  /* min-height: 100vh; */
+  height: 100%;
+  background: pink;
+}
+
+html, #root {
+  height: 100%;
 }
 
 h1 {
