@@ -65,7 +65,6 @@ function App() {
       setBadExamples(prev => prev.filter((_, i) => i !== index))
     }
 
-    const [viewBadExamples, setViewBadExamples] = useState(false)
   const [character, setCharacter] = useState<{
     category: string
     value: string
@@ -297,6 +296,12 @@ function App() {
   }, [menuOpen])
 
   const toggleCategory = (category: 'philosophy' | 'physical' | 'vocal' | 'emotions' | 'locations' | 'activities') => {
+    // Check if this is the only selected category
+    const selectedCount = Object.values(selectedCategories).filter(Boolean).length
+    if (selectedCategories[category] && selectedCount === 1) {
+      // Don't allow toggling off the last selected category
+      return
+    }
     setSelectedCategories(prev => ({
       ...prev,
       [category]: !prev[category],
