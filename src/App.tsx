@@ -4,6 +4,8 @@ import { philosophies } from './data/philosophies'
 import { physicalCharacteristics } from './data/physicalCharacteristics'
 import { vocalCharacteristics } from './data/vocalCharacteristics'
 import { emotions } from './data/emotions'
+import { locations } from './data/locations'
+import { activities } from './data/activities'
 
 function App() {
   const [character, setCharacter] = useState<{
@@ -23,6 +25,8 @@ function App() {
     physical: boolean
     vocal: boolean
     emotions: boolean
+    locations: boolean
+    activities: boolean
   }>(() => {
     const saved = localStorage.getItem('selectedCategories')
     if (saved) {
@@ -37,6 +41,8 @@ function App() {
       physical: true,
       vocal: true,
       emotions: true,
+      locations: true,
+      activities: true,
     }
   })
 
@@ -52,11 +58,15 @@ function App() {
     physical: Set<number>
     vocal: Set<number>
     emotions: Set<number>
+    locations: Set<number>
+    activities: Set<number>
   }>({
     philosophies: new Set(),
     physical: new Set(),
     vocal: new Set(),
     emotions: new Set(),
+    locations: new Set(),
+    activities: new Set(),
   })
 
   const [savedCharacters, setSavedCharacters] = useState<Array<{
@@ -88,6 +98,8 @@ function App() {
                 physical: new Set(parsed.physical),
                 vocal: new Set(parsed.vocal),
                 emotions: new Set(parsed.emotions || []),
+                locations: new Set(parsed.locations || []),
+                activities: new Set(parsed.activities || []),
               })
         } catch (e) {
           console.error('Failed to parse localStorage:', e)
@@ -132,6 +144,8 @@ function App() {
       physical: new Set(),
       vocal: new Set(),
       emotions: new Set(),
+      locations: new Set(),
+      activities: new Set(),
     })
     setMenuOpen(false)
   }
@@ -224,7 +238,7 @@ function App() {
     }
   }, [menuOpen])
 
-  const toggleCategory = (category: 'philosophy' | 'physical' | 'vocal' | 'emotions') => {
+  const toggleCategory = (category: 'philosophy' | 'physical' | 'vocal' | 'emotions' | 'locations' | 'activities') => {
     setSelectedCategories(prev => ({
       ...prev,
       [category]: !prev[category],
@@ -273,6 +287,16 @@ function App() {
       case 'emotions': {
         const idx = getRandomUnusedIndex(emotions, newUsedIndices.emotions)
         value = emotions[idx]
+        break
+      }
+      case 'locations': {
+        const idx = getRandomUnusedIndex(locations, newUsedIndices.locations)
+        value = locations[idx]
+        break
+      }
+      case 'activities': {
+        const idx = getRandomUnusedIndex(activities, newUsedIndices.activities)
+        value = activities[idx]
         break
       }
     }
@@ -352,10 +376,28 @@ function App() {
         <>
           <div className="button-group">
             <button
+              className={`group-btn ${selectedCategories.locations ? 'active' : ''}`}
+              onClick={() => toggleCategory('locations')}
+            >
+              Location
+            </button>
+            <button
+              className={`group-btn ${selectedCategories.activities ? 'active' : ''}`}
+              onClick={() => toggleCategory('activities')}
+            >
+              Activity
+            </button>
+            <button
               className={`group-btn ${selectedCategories.philosophy ? 'active' : ''}`}
               onClick={() => toggleCategory('philosophy')}
             >
               POV
+            </button>
+            <button
+              className={`group-btn ${selectedCategories.emotions ? 'active' : ''}`}
+              onClick={() => toggleCategory('emotions')}
+            >
+              Emotion
             </button>
             <button
               className={`group-btn ${selectedCategories.physical ? 'active' : ''}`}
@@ -369,22 +411,18 @@ function App() {
             >
               Voice
             </button>
-            <button
-              className={`group-btn ${selectedCategories.emotions ? 'active' : ''}`}
-              onClick={() => toggleCategory('emotions')}
-            >
-              Emotion
-            </button>
           </div>
 
           {character && (
             <div className="character-display">
               <div className="trait">
                 <div className="trait-label">
+                  {character.category === 'locations' && 'Location'}
+                  {character.category === 'activities' && 'Activity'}
                   {character.category === 'philosophy' && 'POV'}
+                  {character.category === 'emotions' && 'Emotion'}
                   {character.category === 'physical' && 'Body'}
                   {character.category === 'vocal' && 'Voice'}
-                  {character.category === 'emotions' && 'Emotion'}
                 </div>
                 <div className="trait-value">{character.value}</div>
               </div>
@@ -430,10 +468,12 @@ function App() {
                   <div className="saved-character">
                     <div className="saved-trait">
                       <span className="label">
+                        {char.category === 'locations' && 'Location:'}
+                        {char.category === 'activities' && 'Activity:'}
                         {char.category === 'philosophy' && 'POV:'}
+                        {char.category === 'emotions' && 'Emotion:'}
                         {char.category === 'physical' && 'Body:'}
                         {char.category === 'vocal' && 'Voice:'}
-                        {char.category === 'emotions' && 'Emotion:'}
                       </span> {char.value}
                     </div>
                   </div>
