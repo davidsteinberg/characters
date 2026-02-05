@@ -29,7 +29,6 @@ export const emotions: string[] = [
 	"Composed",
 	"Conceited",
 	"Confident",
-	"Confused",
 	"Content",
 	"Contrite",
 	"Courageous",

@@ -155,7 +155,6 @@ export const locations: string[] = [
   "Sanctuary",
   "Satellite office",
   "Sauna",
-  "Scene shop",
   "Science lab",
   "Screening room",
   "Scullery",
