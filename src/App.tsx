@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
-import './App.css'
-import './BadExamples.css'
+import './styles/index.css'
 import { philosophies } from './data/philosophies'
 import { physicalCharacteristics } from './data/physicalCharacteristics'
 import { vocalCharacteristics } from './data/vocalCharacteristics'

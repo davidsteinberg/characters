@@ -1,0 +1,154 @@
+/* Saved Characters View */
+
+.saved-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1000px;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.back-btn {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: var(--primary-color);
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  margin-left: -1rem;
+  transition: color var(--transition-normal);
+}
+
+.back-btn:hover {
+  color: var(--secondary-color);
+}
+
+.saved-view h2 {
+  color: var(--text-primary);
+}
+
+.empty-message {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  padding: 2rem;
+}
+
+.saved-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.saved-item {
+  display: flex;
+  gap: 1rem;
+  align-items: stretch;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.saved-character {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.saved-trait {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.saved-trait .label {
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-right: 0.5rem;
+}
+
+.saved-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.reorder-btn,
+.remove-btn {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  transition: all var(--transition-normal);
+  min-width: 36px;
+}
+
+.reorder-btn:hover:not(:disabled),
+.remove-btn:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background: #f9f9f9;
+}
+
+.reorder-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.remove-btn:hover {
+  background: #ffe0e0;
+  border-color: var(--error-light);
+  color: var(--error-light);
+}
+
+/* Dark Mode */
+.dark-mode .saved-view h2 {
+  color: var(--text-primary);
+}
+
+.dark-mode .saved-item {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+.dark-mode .saved-trait {
+  color: var(--text-light);
+}
+
+.dark-mode .reorder-btn,
+.dark-mode .remove-btn {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+  color: #999;
+}
+
+.dark-mode .reorder-btn:hover:not(:disabled),
+.dark-mode .remove-btn:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background: #3a3a3a;
+}
+
+.dark-mode .remove-btn:hover {
+  background: #3a2a2a;
+  border-color: var(--error-light);
+  color: var(--error-light);
+}
+
+.dark-mode .back-btn {
+  color: var(--primary-color);
+}
+
+.dark-mode .back-btn:hover {
+  color: var(--secondary-color);
+}

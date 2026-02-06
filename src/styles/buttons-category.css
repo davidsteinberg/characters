@@ -1,0 +1,86 @@
+/* Button Group and Category Buttons */
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg-primary);
+  align-self: stretch;
+  width: 100%;
+  max-width: 600px;
+  flex-shrink: 0;
+  margin-top: 1rem;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.button-row {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 0;
+  border: none;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.button-row:last-child {
+  border-bottom: none;
+}
+
+.group-btn {
+  padding: 0.75rem;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  border: none;
+  border-right: 1px solid var(--border-color);
+  cursor: pointer;
+  font-weight: 400;
+  font-size: 1rem;
+  transition: all var(--transition-normal);
+  flex: 1 1 50%;
+  min-width: 0;
+}
+
+.group-btn:last-child {
+  border-right: none;
+}
+
+.group-btn:hover:not(.active) {
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+}
+
+.group-btn.active {
+  background: var(--primary-gradient);
+  color: #fff;
+  box-shadow: none;
+}
+
+/* Dark Mode */
+.dark-mode .button-group {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+.dark-mode .button-row {
+  border-bottom-color: var(--border-color);
+}
+
+.dark-mode .group-btn {
+  background: var(--bg-secondary);
+  color: #999;
+  border-right-color: var(--border-color);
+}
+
+.dark-mode .group-btn:hover:not(.active) {
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+}
+
+.dark-mode .group-btn.active {
+  background: var(--primary-gradient);
+  color: #fff;
+}

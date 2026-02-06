@@ -1,0 +1,16 @@
+/* Character Display */
+
+.trait {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: left;
+}
+
+.dark-mode .trait-label {
+  color: var(--primary-color);
+}
+
+.dark-mode .trait-value {
+  color: var(--text-primary);
+}
