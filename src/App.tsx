@@ -112,10 +112,13 @@ function App() {
   })
 
   const [menuOpen, setMenuOpen] = useState(false)
-  const [useLocalStorage, setUseLocalStorage] = useState(true)
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('darkMode')
     return saved ? JSON.parse(saved) : false
+  })
+  const [historyEnabled, setHistoryEnabled] = useState(() => {
+    const saved = localStorage.getItem('historyEnabled')
+    return saved ? JSON.parse(saved) : true
   })
 
   const [usedIndices, setUsedIndices] = useState<{
@@ -159,7 +162,7 @@ function App() {
 
   // Load from localStorage on mount
   useEffect(() => {
-    if (useLocalStorage) {
+    if (historyEnabled) {
       const saved = localStorage.getItem('characterIndices')
       if (saved) {
         try {
@@ -180,11 +183,11 @@ function App() {
         }
       }
     }
-  }, [useLocalStorage])
+  }, [historyEnabled])
 
   // Save to localStorage whenever usedIndices changes
   useEffect(() => {
-    if (useLocalStorage) {
+    if (historyEnabled) {
       localStorage.setItem(
         'characterIndices',
         JSON.stringify({
@@ -194,7 +197,7 @@ function App() {
         })
       )
     }
-  }, [usedIndices, useLocalStorage])
+  }, [usedIndices, historyEnabled])
 
   // Save selectedCategories to localStorage
   useEffect(() => {
@@ -205,6 +208,11 @@ function App() {
   useEffect(() => {
     localStorage.setItem('darkMode', JSON.stringify(darkMode))
   }, [darkMode])
+
+  // Save historyEnabled to localStorage
+  useEffect(() => {
+    localStorage.setItem('historyEnabled', JSON.stringify(historyEnabled))
+  }, [historyEnabled])
 
   // Save savedCharacters to localStorage
   useEffect(() => {
@@ -227,13 +235,13 @@ function App() {
     setMenuOpen(false)
   }
 
-  const toggleLocalStorage = () => {
-    setUseLocalStorage(!useLocalStorage)
-    setMenuOpen(false)
-  }
-
   const toggleDarkMode = () => {
     setDarkMode(!darkMode)
+  }
+
+  const toggleHistoryEnabled = () => {
+    setHistoryEnabled(!historyEnabled)
+    setMenuOpen(false)
   }
 
   const toggleSaveCharacter = () => {
@@ -410,18 +418,20 @@ function App() {
       value,
     }
     setCharacter(newCharacter)
-    if (characterHistory && currentCharacterIndex < characterHistory.length - 1) {
-      const newHistory = characterHistory.slice(0, currentCharacterIndex + 1)
-      newHistory.push(newCharacter)
-      setCharacterHistory(newHistory)
-      setCurrentCharacterIndex(newHistory.length - 1)
-    } else if (characterHistory) {
-      const newHistory = [...characterHistory, newCharacter]
-      setCharacterHistory(newHistory)
-      setCurrentCharacterIndex(newHistory.length - 1)
-    } else {
-      setCharacterHistory([newCharacter])
-      setCurrentCharacterIndex(0)
+    if (historyEnabled) {
+      if (characterHistory && currentCharacterIndex < characterHistory.length - 1) {
+        const newHistory = characterHistory.slice(0, currentCharacterIndex + 1)
+        newHistory.push(newCharacter)
+        setCharacterHistory(newHistory)
+        setCurrentCharacterIndex(newHistory.length - 1)
+      } else if (characterHistory) {
+        const newHistory = [...characterHistory, newCharacter]
+        setCharacterHistory(newHistory)
+        setCurrentCharacterIndex(newHistory.length - 1)
+      } else {
+        setCharacterHistory([newCharacter])
+        setCurrentCharacterIndex(0)
+      }
     }
   }
 
@@ -465,8 +475,8 @@ function App() {
             <button className="menu-item" onClick={clearLocalStorage}>
               Clear History
             </button>
-            <button className="menu-item" onClick={toggleLocalStorage}>
-              {useLocalStorage ? 'Disable' : 'Enable'} History
+            <button className="menu-item" onClick={toggleHistoryEnabled}>
+              {historyEnabled ? 'Disable' : 'Enable'} History Tracking
             </button>
             <button className="menu-item" onClick={switchToSavedMode}>
               ★ Saved ({savedCharacters.length})
