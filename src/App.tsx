@@ -7,6 +7,9 @@ import { vocalCharacteristics } from './data/vocalCharacteristics'
 import { emotions } from './data/emotions'
 import { locations } from './data/locations'
 import { activities } from './data/activities'
+import { accents } from './data/accents'
+import { archetypes } from './data/archetypes'
+import { relationships } from './data/relationships'
 
 function App() {
     // Bad examples state
@@ -84,6 +87,9 @@ function App() {
     emotions: boolean
     locations: boolean
     activities: boolean
+    accents: boolean
+    archetypes: boolean
+    relationships: boolean
   }>(() => {
     const saved = localStorage.getItem('selectedCategories')
     if (saved) {
@@ -100,6 +106,9 @@ function App() {
       emotions: true,
       locations: true,
       activities: true,
+      accents: true,
+      archetypes: true,
+      relationships: true,
     }
   })
 
@@ -117,6 +126,9 @@ function App() {
     emotions: Set<number>
     locations: Set<number>
     activities: Set<number>
+    accents: Set<number>
+    archetypes: Set<number>
+    relationships: Set<number>
   }>({
     philosophies: new Set(),
     physical: new Set(),
@@ -124,6 +136,9 @@ function App() {
     emotions: new Set(),
     locations: new Set(),
     activities: new Set(),
+    accents: new Set(),
+    archetypes: new Set(),
+    relationships: new Set(),
   })
 
   const [savedCharacters, setSavedCharacters] = useState<Array<{
@@ -157,6 +172,9 @@ function App() {
                 emotions: new Set(parsed.emotions || []),
                 locations: new Set(parsed.locations || []),
                 activities: new Set(parsed.activities || []),
+                accents: new Set(parsed.accents || []),
+                archetypes: new Set(parsed.archetypes || []),
+                relationships: new Set(parsed.relationships || []),
               })
         } catch (e) {
           console.error('Failed to parse localStorage:', e)
@@ -203,6 +221,9 @@ function App() {
       emotions: new Set(),
       locations: new Set(),
       activities: new Set(),
+      accents: new Set(),
+      archetypes: new Set(),
+      relationships: new Set(),
     })
     setMenuOpen(false)
   }
@@ -295,7 +316,7 @@ function App() {
     }
   }, [menuOpen])
 
-  const toggleCategory = (category: 'philosophy' | 'physical' | 'vocal' | 'emotions' | 'locations' | 'activities') => {
+  const toggleCategory = (category: 'philosophy' | 'physical' | 'vocal' | 'emotions' | 'locations' | 'activities' | 'accents' | 'archetypes' | 'relationships') => {
     // Check if this is the only selected category
     const selectedCount = Object.values(selectedCategories).filter(Boolean).length
     if (selectedCategories[category] && selectedCount === 1) {
@@ -365,6 +386,21 @@ function App() {
       case 'activities': {
         const idx = getRandomUnusedIndex(activities, newUsedIndices.activities, 'activities')
         value = activities[idx]
+        break
+      }
+      case 'accents': {
+        const idx = getRandomUnusedIndex(accents, newUsedIndices.accents, 'accents')
+        value = accents[idx]
+        break
+      }
+      case 'archetypes': {
+        const idx = getRandomUnusedIndex(archetypes, newUsedIndices.archetypes, 'archetypes')
+        value = archetypes[idx]
+        break
+      }
+      case 'relationships': {
+        const idx = getRandomUnusedIndex(relationships, newUsedIndices.relationships, 'relationships')
+        value = relationships[idx]
         break
       }
     }
@@ -462,8 +498,20 @@ function App() {
               >
                 Activity
               </button>
+              <button
+                className={`group-btn ${selectedCategories.relationships ? 'active' : ''}`}
+                onClick={() => toggleCategory('relationships')}
+              >
+                Relationship
+              </button>
             </div>
             <div className="button-row">
+              <button
+                className={`group-btn ${selectedCategories.archetypes ? 'active' : ''}`}
+                onClick={() => toggleCategory('archetypes')}
+              >
+                Archetype
+              </button>
               <button
                 className={`group-btn ${selectedCategories.philosophy ? 'active' : ''}`}
                 onClick={() => toggleCategory('philosophy')}
@@ -490,6 +538,12 @@ function App() {
               >
                 Voice
               </button>
+              <button
+                className={`group-btn ${selectedCategories.accents ? 'active' : ''}`}
+                onClick={() => toggleCategory('accents')}
+              >
+                Accent
+              </button>
             </div>
           </div>
 
@@ -503,6 +557,9 @@ function App() {
                   {character.category === 'emotions' && 'Emotion'}
                   {character.category === 'physical' && 'Body'}
                   {character.category === 'vocal' && 'Voice'}
+                  {character.category === 'accents' && 'Accent'}
+                  {character.category === 'archetypes' && 'Archetype'}
+                  {character.category === 'relationships' && 'Relationship'}
                 </div>
                 <div className="trait-value">{character.value}</div>
               </div>
@@ -561,6 +618,9 @@ function App() {
                         {char.category === 'emotions' && 'Emotion:'}
                         {char.category === 'physical' && 'Body:'}
                         {char.category === 'vocal' && 'Voice:'}
+                        {char.category === 'accents' && 'Accent:'}
+                        {char.category === 'archetypes' && 'Archetype:'}
+                        {char.category === 'relationships' && 'Relationship:'}
                       </span> {char.value}
                     </div>
                   </div>
@@ -612,6 +672,9 @@ function App() {
                             {ex.category === 'emotions' && 'Emotion:'}
                             {ex.category === 'physical' && 'Body:'}
                             {ex.category === 'vocal' && 'Voice:'}
+                            {ex.category === 'accents' && 'Accent:'}
+                            {ex.category === 'archetypes' && 'Archetype:'}
+                            {ex.category === 'relationships' && 'Relationship:'}
                           </span> {ex.value}
                         </div>
                         <button
