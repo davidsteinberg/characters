@@ -158,6 +158,38 @@ function App() {
     return []
   })
 
+  const getCategoryLabel = (category: string, withColon = false) => {
+    const labels: Record<string, string> = {
+      locations: 'Location',
+      activities: 'Activity',
+      philosophy: 'POV',
+      emotions: 'Emotion',
+      physical: 'Body',
+      vocal: 'Voice',
+      accents: 'Accent',
+      archetypes: 'Archetype',
+      relationships: 'Relationship',
+    }
+
+    const label = labels[category] || category
+    return withColon ? `${label}:` : label
+  }
+
+  const downloadSavedCharacters = () => {
+    const text = savedCharacters
+      .map(char => `${getCategoryLabel(char.category, true)} ${char.value}`)
+      .join('\n')
+    const blob = new Blob([text], { type: 'text/plain' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'saved-characters.txt'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+
   const [viewMode, setViewMode] = useState<'browse' | 'saved' | 'badExamples'>('browse')
 
   // Load from localStorage on mount
@@ -560,15 +592,7 @@ function App() {
             <div className="character-display">
               <div className="trait">
                 <div className="trait-label">
-                  {character.category === 'locations' && 'Location'}
-                  {character.category === 'activities' && 'Activity'}
-                  {character.category === 'philosophy' && 'POV'}
-                  {character.category === 'emotions' && 'Emotion'}
-                  {character.category === 'physical' && 'Body'}
-                  {character.category === 'vocal' && 'Voice'}
-                  {character.category === 'accents' && 'Accent'}
-                  {character.category === 'archetypes' && 'Archetype'}
-                  {character.category === 'relationships' && 'Relationship'}
+                  {getCategoryLabel(character.category)}
                 </div>
                 <div className="trait-value">{character.value}</div>
               </div>
@@ -615,52 +639,53 @@ function App() {
           {savedCharacters.length === 0 ? (
             <p className="empty-message">No saved characters yet. Star characters to save them!</p>
           ) : (
-            <div className="saved-list">
-              {savedCharacters.map((char, index) => (
-                <div key={index} className="saved-item">
-                  <div className="saved-character">
-                    <div className="saved-trait">
-                      <span className="label">
-                        {char.category === 'locations' && 'Location:'}
-                        {char.category === 'activities' && 'Activity:'}
-                        {char.category === 'philosophy' && 'POV:'}
-                        {char.category === 'emotions' && 'Emotion:'}
-                        {char.category === 'physical' && 'Body:'}
-                        {char.category === 'vocal' && 'Voice:'}
-                        {char.category === 'accents' && 'Accent:'}
-                        {char.category === 'archetypes' && 'Archetype:'}
-                        {char.category === 'relationships' && 'Relationship:'}
-                      </span> {char.value}
+            <>
+              <div className="saved-list">
+                {savedCharacters.map((char, index) => (
+                  <div key={index} className="saved-item">
+                    <div className="saved-character">
+                      <div className="saved-trait">
+                        <span className="label">
+                            {getCategoryLabel(char.category, true)}
+                        </span> {char.value}
+                      </div>
+                    </div>
+                    <div className="saved-actions">
+                      <button
+                        className="reorder-btn"
+                        onClick={() => moveSavedCharacter(index, 'up')}
+                        disabled={index === 0}
+                        title="Move up"
+                      >
+                        ↑
+                      </button>
+                      <button
+                        className="reorder-btn"
+                        onClick={() => moveSavedCharacter(index, 'down')}
+                        disabled={index === savedCharacters.length - 1}
+                        title="Move down"
+                      >
+                        ↓
+                      </button>
+                      <button
+                        className="remove-btn"
+                        onClick={() => removeSavedCharacter(index)}
+                        title="Remove from saved"
+                      >
+                        ✕
+                      </button>
                     </div>
                   </div>
-                  <div className="saved-actions">
-                    <button
-                      className="reorder-btn"
-                      onClick={() => moveSavedCharacter(index, 'up')}
-                      disabled={index === 0}
-                      title="Move up"
-                    >
-                      ↑
-                    </button>
-                    <button
-                      className="reorder-btn"
-                      onClick={() => moveSavedCharacter(index, 'down')}
-                      disabled={index === savedCharacters.length - 1}
-                      title="Move down"
-                    >
-                      ↓
-                    </button>
-                    <button
-                      className="remove-btn"
-                      onClick={() => removeSavedCharacter(index)}
-                      title="Remove from saved"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+              <button
+                className="download-btn"
+                onClick={downloadSavedCharacters}
+                disabled={savedCharacters.length === 0}
+              >
+                Download saved items
+              </button>
+            </>
           )}
         </div>
       ) : viewMode === 'badExamples' ? (
@@ -675,15 +700,7 @@ function App() {
                       <div key={i} className="bad-item">
                         <div className="bad-item-content">
                           <span className="label">
-                            {ex.category === 'locations' && 'Location:'}
-                            {ex.category === 'activities' && 'Activity:'}
-                            {ex.category === 'philosophy' && 'POV:'}
-                            {ex.category === 'emotions' && 'Emotion:'}
-                            {ex.category === 'physical' && 'Body:'}
-                            {ex.category === 'vocal' && 'Voice:'}
-                            {ex.category === 'accents' && 'Accent:'}
-                            {ex.category === 'archetypes' && 'Archetype:'}
-                            {ex.category === 'relationships' && 'Relationship:'}
+                            {getCategoryLabel(ex.category, true)}
                           </span> {ex.value}
                         </div>
                         <button
